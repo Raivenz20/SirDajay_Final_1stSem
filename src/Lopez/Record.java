@@ -98,17 +98,22 @@ public class Record {
                 System.out.printf("|%-5s%-20s%-1s%-2s%-34s%-8s|\n", "", "Birth Date", ":", "", bdate, "");
                 System.out.printf("|%-5s%-20s%-1s%-2s%-34s%-8s|\n", "", "Registered Date", ":", "", rdate, "");
                 
+                System.out.println("+----------------------------------------------------------------------+");
+                System.out.printf("|%-22s%-25s%-23s|\n", "", "==--Violation History--==", "");
                 String tbl_view = "SELECT Incident_Types.i_name, Incident_Types.i_description, "
                         + "Blotter_Report.r_fname, Blotter_Report.r_lname, Blotter_Report.r_status, Blotter_Report.r_location, "
+                        + "(Blotter_Report.r_fname ||' '|| Blotter_Report.r_lname) AS RepFullname, "
                         + "Blotter_Report.r_incident_date, Blotter_Report.r_reported_date, Blotter_Report.r_solution, Blotter_Report.r_id, "
-                        + "Officer_List.o_fname, Officer_List.o_lname, Officer_List.o_position, Officer_List.o_contact, Officer_List.o_gender "
+                        + "Officer_List.o_fname, Officer_List.o_lname, Officer_List.o_position, Officer_List.o_contact, Officer_List.o_gender, "
+                        + "(Officer_List.o_fname ||' '|| Officer_List.o_lname) AS OffFullname "
                         + "FROM Blotter_Report "
                         + "INNER JOIN Citizen_List ON Blotter_Report.c_id = Citizen_List.c_id "
                         + "INNER JOIN Incident_Types ON Blotter_Report.i_id = Incident_Types.i_id "
                         + "INNER JOIN Officer_List ON Blotter_Report.o_id = Officer_List.o_id "
                         + "Where Citizen_List.c_id = "+id;
-                String[] tbl_Headers = {"Report ID", "Reporter First Name", "Reporter Last Name", "Officer First Name", "Officer Last Name", "Status", "Report Name", "Incident Location", "Incident Date", "Reported Date", "Solution"};
-                String[] tbl_Columns = {"r_id", "r_fname", "r_lname", "o_fname", "o_lname", "r_status", "i_name", "r_location", "r_incident_date", "r_reported_date", "r_solution"};
+                        
+                String[] tbl_Headers = {"Report ID", "Reporter Name", "Officer Name", "Status", "Report Name", "Incident Location", "Incident Date", "Reported Date", "Solution"};
+                String[] tbl_Columns = {"r_id", "RepFullname", "OffFullname", "r_status", "i_name", "r_location", "r_incident_date", "r_reported_date", "r_solution"};
                 conf.viewRecords(tbl_view, tbl_Headers, tbl_Columns);
                 exit2 = false;
                 exit = false;
