@@ -253,4 +253,32 @@ public class config {
         }
         return null;
     }
+    public int ReturnID1(int id){
+        String query = "SELECT rc_id FROM Blotter_Report WHERE r_id = ?";
+        try (Connection conn = connectDB();
+            PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("rc_id");
+            }
+        } catch (SQLException e) {
+            System.out.println("|\tError retrieving status: " + e.getMessage());
+        }
+        return 0;
+    }
+    public int ReturnID2(int id){
+        String query = "SELECT c_id FROM Blotter_Report WHERE r_id = ?";
+        try (Connection conn = connectDB();
+            PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("c_id");
+            }
+        } catch (SQLException e) {
+            System.out.println("|\tError retrieving status: " + e.getMessage());
+        }
+        return 0;
+    }
 }

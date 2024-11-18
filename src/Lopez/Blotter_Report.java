@@ -123,7 +123,9 @@ public class Blotter_Report {
                         try{
                             cid = input.nextInt();
                             SQL = "SELECT COUNT (*) FROM Citizen_List Where c_id = ?";
-                            if(conf.recordExists(SQL, cid)){
+                            if(cid == rcid){
+                                System.out.printf("|%-7s%-35s%-8s|\n", "", "**Warning, Cant Report One's Self**", "");
+                            }else if(conf.recordExists(SQL, cid)){
                                 break;
                             }else{
                                 System.out.printf("|%-5s%-39s%-6s|\n", "", "!!Id Does Not Exist In Citizen's List!!", "");
@@ -192,7 +194,7 @@ public class Blotter_Report {
                     fname = conf.getFName(rcid);
                     lname = conf.getLName(rcid);
                     stat = "Pending";
-                    SQL = "INSERT INTO Blotter_Report (c_id, o_id, i_id, r_fname, r_lname, r_location, r_status, r_incident_date, r_reported_date) Values (?,?,?,?,?,?,?,?,?,?)";
+                    SQL = "INSERT INTO Blotter_Report (c_id, o_id, i_id, r_fname, r_lname, r_location, r_status, r_incident_date, r_reported_date) Values (?,?,?,?,?,?,?,?,?)";
                     conf.addRecord(SQL, cid, oid, iid, fname, lname, location, stat, repdate, cdate);
                 break;
                 case 2:
@@ -486,7 +488,9 @@ public class Blotter_Report {
                         try{
                             cid = input.nextInt();
                             SQL = "SELECT COUNT (*) FROM Citizen_List Where c_id = ?";
-                            if(conf.recordExists(SQL, cid)){
+                            if(rcid == cid){
+                                System.out.printf("|%-7s%-35s%-8s|\n", "", "**Warning, Cant Report One's Self**", "");
+                            }else if(conf.recordExists(SQL, cid)){
                                 break;
                             }else{
                                 System.out.printf("|%-5s%-39s%-6s|\n", "", "!!Id Does Not Exist In Citizen's List!!", "");
@@ -554,8 +558,8 @@ public class Blotter_Report {
                     input.nextLine();
                     fname = conf.getFName(rcid);
                     lname = conf.getLName(rcid);
-                    SQL = "UPDATE Blotter_Report SET c_id = ?, o_id = ?, i_id = ?, r_fname = ?, r_lname = ?, r_location = ?, r_incident_date = ? Where r_id = ?";
-                    conf.updateRecord(SQL, cid, oid, iid, fname, lname, location, repdate, id);
+                    SQL = "UPDATE Blotter_Report SET c_id = ?, rc_id = ?, o_id = ?, i_id = ?, r_fname = ?, r_lname = ?, r_location = ?, r_incident_date = ? Where r_id = ?";
+                    conf.updateRecord(SQL, cid, rcid, oid, iid, fname, lname, location, repdate, id);
                     exit = false;
                 break;
                 case 2:
@@ -655,8 +659,8 @@ public class Blotter_Report {
                         }
                     }
                     input.nextLine();
-                    SQL = "UPDATE Blotter_Report SET c_id = ?, o_id = ?, i_id = ?, r_fname = ?, r_lname = ?, r_location = ?, r_incident_date = ? Where r_id = ?";
-                    conf.updateRecord(SQL, cid, oid, iid, fname, lname, location, repdate, id);
+                    SQL = "UPDATE Blotter_Report SET c_id = ?, rc_id = ? o_id = ?, i_id = ?, r_fname = ?, r_lname = ?, r_location = ?, r_incident_date = ? Where r_id = ?";
+                    conf.updateRecord(SQL, cid, 0, oid, iid, fname, lname, location, repdate, id);
                     exit = false;
                 break;
                 default:
@@ -667,6 +671,7 @@ public class Blotter_Report {
     }
     private void EditReportedCit(int id){
         boolean exit = true;
+        int rcid = conf.ReturnID1(id);
         int cid;
         cit.view();
         System.out.println("+--------------------------------------------------+");
@@ -677,7 +682,9 @@ public class Blotter_Report {
             try{
                 cid = input.nextInt();
                 String SQL = "SELECT COUNT (*) FROM Citizen_List Where c_id = ?";
-                if(conf.recordExists(SQL, cid)){
+                if(rcid == cid){
+                    System.out.printf("|%-7s%-35s%-8s|\n", "", "**Warning, Cant Report One's Self**", "");
+                }else if(conf.recordExists(SQL, cid)){
                     break;
                 }else if(cid == 0){
                     exit = false;
@@ -692,18 +699,18 @@ public class Blotter_Report {
         }
         input.nextLine();
         while(exit){
-            String SQL = "UPDATE Blotter_Report SET c_id = ? Where r_id = ?";
-            conf.updateRecord(SQL, cid, id);
+            String SQL = "UPDATE Blotter_Report SET rc_id = ?, c_id = ? Where r_id = ?";
+            conf.updateRecord(SQL, rcid, cid, id);
             exit = false;
         }
     }
     private void EditReporterInfo(int id){
-        boolean exit = true;
         System.out.println("+--------------------------------------------------+----------------+");
         System.out.printf("|%-67s|\n", "The Person Making The Report Is A Registered Citizen? (Yes/No)");
         String CitOrNot;
         int CitOrNot2;
-        int rcid;
+        int rcid,cid;
+        String SQL;
         String fname = null, lname = null;
         while(true){
             System.out.printf("|%-5sEnter: ","");
@@ -719,18 +726,22 @@ public class Blotter_Report {
             }
         }
         System.out.println("+--------------------------------------------------+----------------+");
+        cid = conf.ReturnID2(id);
         switch(CitOrNot2){
             case 1:
                 cit.view();
                 System.out.println("+--------------------------------------------------+");
                 System.out.printf("|%-10s%-29s%-11s|\n", "", "**Select ID of The Reporter**", "");
                 System.out.println("+--------------------------------------------------+");
+                
                 while(true){
                     System.out.printf("|%-5sEnter ID: ","");
                     try{
                         rcid = input.nextInt();
-                        String SQL = "SELECT COUNT (*) FROM Citizen_List Where c_id = ?";
-                        if(conf.recordExists(SQL, rcid)){
+                        SQL = "SELECT COUNT (*) FROM Citizen_List Where c_id = ?";
+                        if(cid == rcid){
+                            System.out.printf("|%-7s%-35s%-8s|\n", "", "**Warning, Cant Report One's Self**", "");
+                        }else if(conf.recordExists(SQL, rcid)){
                             break;
                         }else{
                             System.out.printf("|%-5s%-39s%-6s|\n", "", "!!Id Does Not Exist In Citizen's List!!", "");
@@ -743,6 +754,8 @@ public class Blotter_Report {
                 input.nextLine();
                 fname = conf.getFName(rcid);
                 lname = conf.getLName(rcid);
+                SQL = "UPDATE Blotter_Report SET c_id = ?, rc_id = ?, r_fname = ?, r_lname = ? Where r_id = ?";
+                conf.updateRecord(SQL, cid, rcid, fname, lname, id);
             break;
             case 2:
                 System.out.println("+--------------------------------------------------+");
@@ -766,15 +779,11 @@ public class Blotter_Report {
                         System.out.printf("|%-11s%-27s%-12s|\n", "", "!!Enter A Valid Last Name!!", "");
                     }
                 }
+                SQL = "UPDATE Blotter_Report SET rc_id = ?, r_fname = ?, r_lname = ? Where r_id = ?";
+                conf.updateRecord(SQL, 0, fname, lname, id);
             break;
             default:
-                exit = false;
             break;
-        }
-        while(exit){
-            String SQL = "UPDATE Blotter_Report SET r_fname = ?, r_lname = ? Where r_id = ?";
-            conf.updateRecord(SQL, fname, lname, id);
-            exit = false;
         }
     }
     private void EditLocation(int id){
@@ -929,7 +938,7 @@ public class Blotter_Report {
         }
         while(exit){
             input.nextLine();
-            System.out.print("|%-5sSolution: ");
+            System.out.printf("|%-5sSolution: ","");
             String solution = input.nextLine();
             String SQL = "UPDATE Blotter_Report SET r_status = ?, r_solution = ? Where r_id = ?";
             conf.updateRecord(SQL, stat, solution, id);
