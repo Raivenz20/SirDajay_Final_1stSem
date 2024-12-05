@@ -411,7 +411,7 @@ public class Blotter_Report {
                             exit = false;
                         break;
                     }
-                    if(option!=5){
+                    if(option!=7){
                         System.out.println("+--------------------------------------------------+");
                         System.out.printf("|%-10s%-19s%-11s|\n", "", "Edit Another Report? (Yes/No)", "");
                         String again;
